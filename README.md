@@ -1,4 +1,4 @@
-# socialtrellis-cli
+# cli-bash-tool
 CLI tool to enable shorthand commands for tedious things tasks
 
 ## Setup
