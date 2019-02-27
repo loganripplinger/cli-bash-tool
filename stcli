@@ -1,0 +1,102 @@
+#!/bin/bash
+
+#nano ~/.bashrc
+#alias sotr=". /path/to/cli/clifile" #Could I use npm to install?
+
+# if no arugments are provided then goto project root
+if [ $# -eq 0 ]; then
+  cd $project
+fi
+
+case $1 in
+  j|jenk|jenkins)
+    # SSH to testing/deployment server
+    echo "$main_login_tip"
+    ssh $jenkins_ssh_login
+    ;;
+
+  web|app|live|prod)
+    # SSH to main website
+    ssh $main_ssh_login
+    ;;
+
+  cli)
+    # Goto this tool's folder
+    cd $cli
+    ;;
+
+  lint)
+    npm run pretest
+    ;;
+
+  fix)
+    npm run pretest -- --fix
+    ;;
+
+  ship)
+    # Run www.socialtrellis preship commands and then git push
+    ship_path="/script/ship"
+    /bin/bash $project$ship_path
+    ;;
+
+  ru)
+    # Check if Russian www.socialtrellis.com works
+    curl --header "accept-language: ru" $main_website
+    ;;
+
+  en)
+    # Check if English www.socialtrellis.com works
+    curl --header "accept-language: en" $main_website
+    ;;
+
+  cache|cacheen)
+    # Check if cloudflare is caching English
+    echo "look for CF-Cache-Status: HIT"
+    curl -svo /dev/null $main_website
+    ;;
+
+  cacheru)
+    # Check if cloudflare is caching Russian
+    echo "look for CF-Cache-Status: HIT"
+    curl --header "accept-language: ru" -svo /dev/null $main_website
+    ;;
+
+  sa-front|front)
+    # Goto the reddit analytics frontend folder
+    cd $reddit$frontend
+    ;;
+
+  sa-back|back)
+    # Goto the reddit analytics backend folder
+    cd $reddit$backend
+    ;;
+
+  sa-build)
+    cd $reddit$frontend
+    npm run build
+    cd $reddit$backend
+    go build && go run main.go -dev
+    ;;
+    
+  sa-runback)
+    cd $reddit$backend
+    go build && go run main.go -dev
+    ;;
+
+  -h|--help)
+    echo "calling this application with no arugments will change directory to website project"
+    echo "    j|jenk|jenkins    -> ssh to jenkins server"
+    echo "    web|app|live|prod -> ssh to website server"
+    echo "    cli               -> change directory to the cli project"
+    echo "    ship              -> does a git pull -r, npm test, and git push"
+    echo "    en                -> curl with english"
+    echo "    ru                -> curl with russian"
+    echo "    cache|cacheen     -> check if cloudflare is caching index"
+    echo "    cacheru           -> check if cloudflare is caching ru index"
+    echo "    lint              -> runs linter"
+    echo "    fix               -> runs the linter fix command"
+    echo "    sa-back|back      -> cd to reddit analytics backend"
+    echo "    sa-front|front    -> cd to reddit analytics frontend"
+    echo "    sa-build          -> build reddit analytics and run go dev server"
+    echo "    sa-runback        -> go build and run"
+esac
