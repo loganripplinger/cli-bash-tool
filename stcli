@@ -3,6 +3,9 @@
 #nano ~/.bashrc
 #alias sotr=". /path/to/cli/clifile" #Could I use npm to install?
 
+secret_file="absolute/path/to/secrets"
+. $secret_file
+
 # if no arugments are provided then goto project root
 if [ $# -eq 0 ]; then
   cd $project
@@ -20,7 +23,7 @@ case $1 in
     ssh $main_ssh_login
     ;;
 
-  cli)
+  stcli|cli)
     # Goto this tool's folder
     cd $cli
     ;;
@@ -87,7 +90,7 @@ case $1 in
     echo "calling this application with no arugments will change directory to website project"
     echo "    j|jenk|jenkins    -> ssh to jenkins server"
     echo "    web|app|live|prod -> ssh to website server"
-    echo "    cli               -> change directory to the cli project"
+    echo "    stcli|cli         -> change directory to the cli project"
     echo "    ship              -> does a git pull -r, npm test, and git push"
     echo "    en                -> curl with english"
     echo "    ru                -> curl with russian"

@@ -26,6 +26,8 @@ main_login_tip=""
 
 Fill these in with your variables.
 
+At the top of your cli file add the filepath to your secrets file.
+
 ### Yay!
 Now you can use `sotr command` in the terminal.
 
